@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Traveler",
+    "icon": "",
+    "version": "1.0.0",
+    "platforms": ["ios"],
+    "orientation": "portrait",
+    "slug": "traveler",
+    "sdkVersion": "27.0.0",
+    "ios": {
+      "config": {
+        "googleMapsApiKey": "AIzaSyCpf3HrjGBHLI6mxM7iv8Y_o_ASgOct1bA"
+      }
+    }
+  }
+}
