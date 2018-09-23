@@ -4,18 +4,6 @@ import { Text, View, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const config = {
-  headers: {
-    Authorization: 'Bearer u7IGu_9imvSNXhcFF8SL2bezzy9ktJy3MowyKCcp9-JZ3Gc1ew_NfmGuPqTK4koxAGv63qYbXZTeI_LNcdjArC7IcXDTzKotaUc81a53sf6tHX0cTJlgdYG4i2ekW3Yx',
-  },
-  params: {
-    term: 'tourist attractions',
-    location: 'new york',
-  },
-};
-
-const origin = { latitude: 40.7480124, longitude: -73.9894128 }; // new york
-
 export default class Map extends React.Component {
   constructor() {
     super();
@@ -23,7 +11,21 @@ export default class Map extends React.Component {
     this.state = {
       isLoading: true,
       markers: [],
-      origin,
+      origin: { latitude: 40.7050758, longitude: -74.0091604 },
+    };
+
+    config = {
+      headers: {
+        Authorization: 'Bearer u7IGu_9imvSNXhcFF8SL2bezzy9ktJy3MowyKCcp9-JZ3Gc1ew_NfmGuPqTK4koxAGv63qYbXZTeI_LNcdjArC7IcXDTzKotaUc81a53sf6tHX0cTJlgdYG4i2ekW3Yx',
+      },
+      params: {
+        term: 'Tourists Must See List',
+        raduis: 0.5,
+        latitude: this.state.origin.latitude,
+        longitude: this.state.origin.longitude,
+        sort_by: 'distance',
+        limit: 5,
+      },
     };
   }
 
@@ -34,9 +36,16 @@ export default class Map extends React.Component {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         };
+        console.log('WHY');
+        config.params.latitude = newOrigin.latitude;
+        config.params.longitude = newOrigin.longitude;
+
         this.setState({
           origin: newOrigin,
         });
+
+        // (config.params.latitude = newOrigin.latitude)
+        //   (config.params.longitude = newOrigin.longitude)
       },
       err => {
         console.log('error');
@@ -47,12 +56,23 @@ export default class Map extends React.Component {
   };
 
   async componentDidMount() {
-    const yas = await this.fetchMarkerData();
+    const las = await this.editYelp();
     const nas = await this.getLocation();
+    const yas = await this.fetchMarkerData();
     return {
-      yas,
       nas,
+      yas,
     };
+  }
+
+  editYelp() {
+    (config.params.latitude = this.state.origin.latitude), (config.params.longitude = this.state.origin.longitude);
+    return console.log(
+      'AS WELLL',
+      config.params.latitude,
+      config.params.longitude,
+      this.state.origin.latitude
+    );
   }
 
   fetchMarkerData() {
@@ -70,6 +90,12 @@ export default class Map extends React.Component {
   }
 
   render() {
+    console.log(
+      'HEREEEE',
+      config.params.latitude,
+      config.params.longitude,
+      this.state.origin.latitude
+    );
     return (
       <MapView
         style={{ flex: 1 }}
