@@ -30,33 +30,37 @@ export default class Map extends React.Component {
   }
 
   getLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        let newOrigin = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        console.log('WHY');
-        config.params.latitude = newOrigin.latitude;
-        config.params.longitude = newOrigin.longitude;
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          let newOrigin = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          console.log('WHY');
+          config.params.latitude = newOrigin.latitude;
+          config.params.longitude = newOrigin.longitude;
 
-        this.setState({
-          origin: newOrigin,
-        });
+          this.setState({
+            origin: newOrigin,
+          });
+          resolve(true);
 
-        // (config.params.latitude = newOrigin.latitude)
-        //   (config.params.longitude = newOrigin.longitude)
-      },
-      err => {
-        console.log('error');
-        console.log(err);
-      },
-      { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
-    );
+          // (config.params.latitude = newOrigin.latitude)
+          //   (config.params.longitude = newOrigin.longitude)
+        },
+        err => {
+          console.log('error');
+          console.log(err);
+          reject(reject);
+        },
+        { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
+      );
+    });
   };
 
   async componentDidMount() {
-    const las = await this.editYelp();
+    // const las = await this.editYelp();
     const nas = await this.getLocation();
     const yas = await this.fetchMarkerData();
     return {
@@ -65,18 +69,19 @@ export default class Map extends React.Component {
     };
   }
 
-  editYelp() {
-    (config.params.latitude = this.state.origin.latitude), (config.params.longitude = this.state.origin.longitude);
-    return console.log(
-      'AS WELLL',
-      config.params.latitude,
-      config.params.longitude,
-      this.state.origin.latitude
-    );
-  }
+  // editYelp() {
+  //   (config.params.latitude = this.state.origin.latitude), (config.params.longitude = this.state.origin.longitude);
+  //   return console.log(
+  //     'AS WELLL',
+  //     config.params.latitude,
+  //     config.params.longitude,
+  //     this.state.origin.latitude
+  //   );
+  // }
 
   fetchMarkerData() {
-    axios
+    console.log('HELLO MARKER', config, this.config);
+    return axios
       .get('https://api.yelp.com/v3/businesses/search', config)
       .then(responseJson => {
         this.setState({
@@ -84,6 +89,7 @@ export default class Map extends React.Component {
           markers: responseJson.data.businesses.map(x => x),
         });
       })
+      .then(() => console.log('Yas fetch', config))
       .catch(error => {
         console.log(error);
       });
