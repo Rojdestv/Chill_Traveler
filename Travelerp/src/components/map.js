@@ -37,7 +37,6 @@ export default class Map extends React.Component {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           };
-          console.log('WHY');
           config.params.latitude = newOrigin.latitude;
           config.params.longitude = newOrigin.longitude;
 
@@ -45,9 +44,6 @@ export default class Map extends React.Component {
             origin: newOrigin,
           });
           resolve(true);
-
-          // (config.params.latitude = newOrigin.latitude)
-          //   (config.params.longitude = newOrigin.longitude)
         },
         err => {
           console.log('error');
@@ -60,7 +56,6 @@ export default class Map extends React.Component {
   };
 
   async componentDidMount() {
-    // const las = await this.editYelp();
     const nas = await this.getLocation();
     const yas = await this.fetchMarkerData();
     return {
@@ -69,18 +64,7 @@ export default class Map extends React.Component {
     };
   }
 
-  // editYelp() {
-  //   (config.params.latitude = this.state.origin.latitude), (config.params.longitude = this.state.origin.longitude);
-  //   return console.log(
-  //     'AS WELLL',
-  //     config.params.latitude,
-  //     config.params.longitude,
-  //     this.state.origin.latitude
-  //   );
-  // }
-
   fetchMarkerData() {
-    console.log('HELLO MARKER', config, this.config);
     return axios
       .get('https://api.yelp.com/v3/businesses/search', config)
       .then(responseJson => {
@@ -96,12 +80,6 @@ export default class Map extends React.Component {
   }
 
   render() {
-    console.log(
-      'HEREEEE',
-      config.params.latitude,
-      config.params.longitude,
-      this.state.origin.latitude
-    );
     return (
       <MapView
         style={{ flex: 1 }}
@@ -120,20 +98,18 @@ export default class Map extends React.Component {
                 latitude: marker.coordinates.latitude,
                 longitude: marker.coordinates.longitude,
               };
+              const namer = `${marker.name}(${marker.rating} rating)`;
+              const addresser = `${marker.location.address1}, ${marker.location.city}`;
               return (
                 <MapView.Marker
                   key={marker.id}
                   coordinate={coords}
-                  title={marker.name}
-                  // description={marker.rating}
+                  title={namer}
+                  description={addresser}
                 >
 
-                  <MapView.Callout style={styles.bubble}>
-
-                    <Text> Name: {marker.name} Rating:{marker.rating}</Text>
-                    {/* <Image style={styles.image} source={marker.image_url} /> */}
-                  </MapView.Callout>
                   <Icon name="map-marker" size={30} color={'#605A56'} />
+
                 </MapView.Marker>
               );
             })}
@@ -145,18 +121,3 @@ export default class Map extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  // Callout bubble
-  bubble: {
-    flexDirection: 'row',
-    alignSelf: 'flex-start',
-    backgroundColor: '#E7E7E6',
-    padding: 15,
-    width: 150,
-  },
-  image: {
-    width: 120,
-    height: 80,
-  },
-});
