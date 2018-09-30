@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapView } from 'expo';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Linking, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -56,12 +56,8 @@ export default class Map extends React.Component {
   };
 
   async componentDidMount() {
-    const nas = await this.getLocation();
-    const yas = await this.fetchMarkerData();
-    return {
-      nas,
-      yas,
-    };
+    await this.getLocation();
+    await this.fetchMarkerData();
   }
 
   fetchMarkerData() {
@@ -73,7 +69,6 @@ export default class Map extends React.Component {
           markers: responseJson.data.businesses.map(x => x),
         });
       })
-      .then(() => console.log('Yas fetch', config))
       .catch(error => {
         console.log(error);
       });
@@ -98,14 +93,30 @@ export default class Map extends React.Component {
                 latitude: marker.coordinates.latitude,
                 longitude: marker.coordinates.longitude,
               };
-              const namer = `${marker.name}(${marker.rating} rating)`;
-              const addresser = `${marker.location.address1}, ${marker.location.city}`;
+              const url = marker.url;
+
+              const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
+              const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
               return (
                 <MapView.Marker
                   key={marker.id}
                   coordinate={coords}
-                  title={namer}
-                  description={addresser}
+                  title={nameOfMarker}
+                  description={addressOfMarker}
+                  onPress={() =>
+                    Alert.alert(
+                      'Redirect to yelp?',
+                      'or cancel to wing it ;) ',
+                      [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        { text: 'OK', onPress: () => Linking.openURL(url) },
+                      ],
+                      { cancelable: false }
+                    )}
                 >
 
                   <Icon name="map-marker" size={30} color={'#605A56'} />
