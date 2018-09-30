@@ -16,7 +16,7 @@ export default class Map extends React.Component {
 
     config = {
       headers: {
-        Authorization: 'Bearer u7IGu_9imvSNXhcFF8SL2bezzy9ktJy3MowyKCcp9-JZ3Gc1ew_NfmGuPqTK4koxAGv63qYbXZTeI_LNcdjArC7IcXDTzKotaUc81a53sf6tHX0cTJlgdYG4i2ekW3Yx',
+        Authorization: 'Bearer <api key>',
       },
       params: {
         term: 'Tourists Must See List',
